@@ -3,9 +3,9 @@ import numpy as np
 import os
 import glob
 
-image_dir = "/home/quinyang/labelty_uci_quiny/resource/images/"
-label_dir = "/home/quinyang/labelty_uci_quiny/resource/labels/"
-output_dir = "/home/quinyang/labelty_uci_quiny/resource/labels_mask/"
+image_dir = "/home/jiakuny1/Projects/resource/images/"
+label_dir = "/home/jiakuny1/Projects/resource/labels/"
+output_dir = "/home/jiakuny1/Projects/resource/labels_mask/"
 
 os.makedirs(output_dir, exist_ok=True)
 

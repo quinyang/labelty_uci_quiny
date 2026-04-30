@@ -7,11 +7,11 @@ from PIL import Image
 
 # --- CONFIGURATION ---
 # Paths to your current data
-source_images_dir = "./resource/images/"
-source_masks_dir = "./resource/labels_mask/"
+source_images_dir = "/home/jiakuny1/Projects/resource/images/"
+source_masks_dir = "/home/jiakuny1/Projects/resource/labels_mask/"
 
 # Path to your new nnU-Net raw directory (using the variables we just set)
-nnunet_raw_dir = "./nnUNet_data/nnUNet_raw/"
+nnunet_raw_dir = "/home/jiakuny1/Projects/nnUNet_data/nnUNet_raw/"
 dataset_name = "Dataset101_Dental"  # nnU-Net requires 'DatasetXXX_Name'
 dataset_path = os.path.join(nnunet_raw_dir, dataset_name)
 
