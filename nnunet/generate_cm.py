@@ -7,8 +7,14 @@ import os
 import glob
 
 # Set your directories
-pred_dir = "/home/jiakuny1/Projects/nnUNet_data/model_predictions"
+pred_dir = "/home/jiakuny1/Projects/nnUNet_data/model_predictions/Dataset102_fold0"
 gt_dir = "/home/jiakuny1/Projects/resource/labels_mask"
+
+CLASS_NAMES = [
+    "Background", "Apical Lesion", "Main Root", "Main Canal",
+    "Mesial Root", "Mesial Canal", "Distal Root", "Distal Canal",
+    "Palatal Root", "Palatal Canal", "RC Filling", "Decay",
+]
 
 all_y_true = []
 all_y_pred = []
@@ -46,20 +52,18 @@ y_true = np.concatenate(all_y_true)
 y_pred = np.concatenate(all_y_pred)
 
 print("Calculating the confusion matrix...")
-classes = np.unique(np.concatenate((y_true, y_pred)))
-
-# We normalize by 'true' so the rows show percentages instead of raw pixel counts.
-# Otherwise, the background (Class 0) would have 50 million pixels and break the color scale!
-cm = confusion_matrix(y_true, y_pred, labels=classes, normalize='true')
+all_classes = list(range(len(CLASS_NAMES)))
+cm = confusion_matrix(y_true, y_pred, labels=all_classes, normalize='true')
 
 print("Drawing the heatmap...")
-plt.figure(figsize=(12, 10))
+plt.figure(figsize=(14, 12))
 sns.heatmap(cm, annot=True, fmt='.2f', cmap='Blues',
-            xticklabels=classes, yticklabels=classes)
+            xticklabels=CLASS_NAMES, yticklabels=CLASS_NAMES)
 
-plt.xlabel('Predicted Class (What the Model Guessed)')
-plt.ylabel('True Class (Ground Truth)')
-plt.title('Pixel-wise Confusion Matrix (Normalized by True Class)')
+plt.xlabel('Predicted Class')
+plt.ylabel('True Class')
+plt.title('nnUNet (Dataset102 Aug) — Confusion Matrix (row-normalized)')
+plt.xticks(rotation=45, ha='right')
 plt.tight_layout()
 
 # Save the output

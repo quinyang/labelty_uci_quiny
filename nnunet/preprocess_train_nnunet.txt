@@ -1,0 +1,35 @@
+how to run the preprocess and train for nnunet: 
+
+Step 1 — set the three required env vars (every new terminal session):
+
+  export nnUNet_raw="/home/jiakuny1/Projects/nnUNet_data/nnUNet_raw"
+  export nnUNet_preprocessed="/home/jiakuny1/Projects/nnUNet_data/nnUNet_preprocessed"
+  export nnUNet_results="/home/jiakuny1/Projects/nnUNet_data/nnUNet_results"
+
+  Step 2 — rerun preprocessing (wipes old preprocessed data and rebuilds):
+
+  nnUNetv2_plan_and_preprocess -d 102 --verify_dataset_integrity
+
+  This takes ~1 min for 436 images. It writes to nnUNet_preprocessed/Dataset101_Dental/.
+
+  Step 3 — train (fresh run, fold 0, 2D config):
+
+  nnUNetv2_train 102 2d 0
+
+  To resume a run that was interrupted, add -c:
+
+  nnUNetv2_train 102 2d 0 -c
+
+  ---
+  Two things to note:
+/
+  1. The notebook had the wrong base path (/home/quinyang/... instead of /home/jiakuny1/...) — that's why you should use
+  the terminal commands above with the correct paths.
+  2. nnUNet manages its own augmentation pipeline internally, so it will not use the Dataset101_Dental_Aug folder. It runs
+   on the original Dataset101_Dental (436 images) with its own built-in random augmentation. If you want nnUNet to train
+  on the augmented dataset, that requires a separate step — let me know if you want to set that up.
+
+
+  nnUNetv2_predict -i /home/jiakuny1/Projects/nnUNet_data/nnUNet_raw/Dataset102_Dental_Aug/imagesTs -o /home/jiakuny1/Projects/nnUNet_data/model_predictions/Dataset102_fold0 -d 102 -c 2d -f 0 --save_probabilities
+
+

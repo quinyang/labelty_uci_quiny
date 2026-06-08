@@ -1,1 +1,34 @@
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+
+# ---- Virtual environments ----
 /venv
+.venv/
+env/
+
+# ---- Editor / OS / agent ----
+.claude/
+.vscode/
+.DS_Store
+
+# ---- Training logs (large, regenerated each run) ----
+**/logs/
+*.log
+
+# ---- Model weights & large binaries (keep in Google Drive) ----
+*.pth
+*.pt
+*.ckpt
+*.onnx
+*.npz
+*.npy
+
+# ---- Third-party MONAI bundle (~1.1 GB, downloaded — not source) ----
+bundles/
+
+# ---- Datasets & generated assets (keep in Google Drive, not git) ----
+nnUNet_data/
+*_predictions/

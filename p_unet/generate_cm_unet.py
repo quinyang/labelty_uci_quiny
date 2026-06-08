@@ -24,7 +24,7 @@ CLASS_NAMES = [
     "Decay",         # 11
 ]
 
-pred_dir = "/home/jiakuny1/Projects/swin_predictions"
+pred_dir = "/home/jiakuny1/Projects/unet_predictions"
 gt_dir   = "/home/jiakuny1/Projects/resource/labels_mask"
 
 all_y_true = []
@@ -87,30 +87,34 @@ for i, name in enumerate(CLASS_NAMES):
 print(f"\nmDice (excl. bg) : {dice_cls[1:].mean():.4f}")
 print(f"mIoU  (excl. bg) : {iou_cls[1:].mean():.4f}")
 
-csv_path = "/home/jiakuny1/Projects/metrics_swin.csv"
-pd.DataFrame({
+# Save CSV
+df = pd.DataFrame({
     "Class": CLASS_NAMES,
     "Dice": dice_cls,
     "IoU": iou_cls,
     "Precision": prec_cls,
     "Recall": rec_cls,
-}).to_csv(csv_path, index=False)
+})
+csv_path = "/home/jiakuny1/Projects/metrics_unet.csv"
+df.to_csv(csv_path, index=False)
 print(f"Saved metrics to {csv_path}")
 
+# Row-normalised CM for visualisation
 row_sums = cm_raw.sum(axis=1, keepdims=True).astype(float)
 row_sums[row_sums == 0] = 1
 cm_norm = cm_raw / row_sums
 
+# Figure: confusion matrix + per-class bar chart
 fig = plt.figure(figsize=(22, 8))
 gs  = gridspec.GridSpec(1, 2, width_ratios=[3, 2], figure=fig)
 
 ax1 = fig.add_subplot(gs[0])
-sns.heatmap(cm_norm, annot=True, fmt=".2f", cmap="Blues",
+sns.heatmap(cm_norm, annot=True, fmt=".2f", cmap="Oranges",
             xticklabels=CLASS_NAMES, yticklabels=CLASS_NAMES,
             ax=ax1, annot_kws={"size": 7}, vmin=0, vmax=1)
 ax1.set_xlabel("Predicted Class", fontsize=10)
 ax1.set_ylabel("True Class (Ground Truth)", fontsize=10)
-ax1.set_title("SwinUNETR — Pixel-wise Confusion Matrix (row-normalised)", fontsize=12)
+ax1.set_title("ResNet34 U-Net — Pixel-wise Confusion Matrix (row-normalised)", fontsize=12)
 plt.setp(ax1.get_xticklabels(), rotation=45, ha="right", fontsize=8)
 plt.setp(ax1.get_yticklabels(), rotation=0,  fontsize=8)
 
@@ -120,11 +124,11 @@ fg_dice  = dice_cls[1:]
 fg_iou   = iou_cls[1:]
 x     = np.arange(len(fg_names))
 width = 0.35
-ax2.bar(x - width / 2, fg_dice, width, label="Dice",  color="steelblue",  alpha=0.85)
-ax2.bar(x + width / 2, fg_iou,  width, label="IoU",   color="dodgerblue", alpha=0.85)
-ax2.axhline(fg_dice.mean(), color="steelblue",  linestyle="--", alpha=0.7,
+ax2.bar(x - width / 2, fg_dice, width, label="Dice",  color="coral",     alpha=0.85)
+ax2.bar(x + width / 2, fg_iou,  width, label="IoU",   color="steelblue", alpha=0.85)
+ax2.axhline(fg_dice.mean(), color="coral",     linestyle="--", alpha=0.7,
             label=f"mDice={fg_dice.mean():.3f}")
-ax2.axhline(fg_iou.mean(),  color="dodgerblue", linestyle="--", alpha=0.7,
+ax2.axhline(fg_iou.mean(),  color="steelblue", linestyle="--", alpha=0.7,
             label=f"mIoU={fg_iou.mean():.3f}")
 ax2.set_xticks(x)
 ax2.set_xticklabels(fg_names, rotation=45, ha="right", fontsize=8)
@@ -134,6 +138,6 @@ ax2.set_title("Per-Class Dice & IoU (background excluded)", fontsize=11)
 ax2.legend(fontsize=8)
 
 plt.tight_layout()
-out_path = "/home/jiakuny1/Projects/confusion_matrix_swin.png"
+out_path = "/home/jiakuny1/Projects/confusion_matrix_unet.png"
 plt.savefig(out_path, dpi=200, bbox_inches="tight")
 print(f"\nSaved CM figure to {out_path}")
